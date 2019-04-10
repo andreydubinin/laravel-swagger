@@ -66,14 +66,13 @@ class BodyParameterGenerator implements ParameterGenerator
             $type = $this->getParamType($rules);
         }
 
-        if ($name === '*') {
-            $name = 0;
-        }
-
         if (!isset($properties[$name])) {
             $propObj = $this->getNewPropObj($type, $rules);
-
-            $properties[$name] = $propObj;
+            if ($name === '*') {
+                $properties = $propObj;
+            }else{
+                $properties[$name] = $propObj;
+            }
         } else {
             //overwrite previous type in case it wasn't given before
             $properties[$name]['type'] = $type;
@@ -81,8 +80,18 @@ class BodyParameterGenerator implements ParameterGenerator
 
         if ($type === 'array') {
             $this->addToProperties($properties[$name]['items'], $nameTokens, $rules);
+            if(empty($properties[$name]['items'])){
+                $properties[$name]['items'] = [
+                    'type' => 'string'
+                ];
+            }
         } else if ($type === 'object') {
-            $this->addToProperties($properties[$name]['properties'], $nameTokens, $rules);
+            if ($name === '*') {
+                $this->addToProperties($properties['properties'], $nameTokens, $rules);
+            }else{
+                $this->addToProperties($properties[$name]['properties'], $nameTokens, $rules);
+            }
+
         }
     }
 

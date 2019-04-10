@@ -15,7 +15,8 @@ class GenerateSwaggerDoc extends Command
                             {--format=json : The format of the output, current options are json and yaml}
                             {--filter= : Filter to a specific route prefix, such as /api or /v2/api}
                             {--auth= : Authentication to be applied globally}
-                            {--host= : Host name of the swagger if you wish to change the default}';
+                            {--host= : Host name of the swagger if you wish to change the default}
+                            {--user= : Id user for authorization}';
 
     /**
      * The console command description.
@@ -33,7 +34,13 @@ class GenerateSwaggerDoc extends Command
     {
         $config = config('laravel-swagger');
 
-        $docs = (new Generator($config, $this->option('filter') ?: null, $this->option('auth') ?: null, !is_null($this->option('host')) ? $this->option('host') : null))->generate();
+        $docs = (new Generator(
+            $config,
+            $this->option('filter') ?: null,
+            $this->option('auth') ?: null,
+            $this->option('host') ?: null,
+            $this->option('user') ?: null)
+        )->generate();
 
         $formattedDocs = (new FormatterManager($docs))
             ->setFormat($this->option('format'))

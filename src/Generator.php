@@ -27,16 +27,20 @@ class Generator
 
     protected $action;
 
-    public function __construct($config, $routeFilter = null, $auth = null, $host = null)
+    protected $userId;
+
+    public function __construct($config, $routeFilter = null, $auth = null, $host = null, $userId = null)
     {
         $this->config = $config;
         $this->routeFilter = $routeFilter;
         $this->auth = $auth;
         $this->host = $host;
+        $this->userId = intval($userId);
     }
 
     public function generate()
     {
+        $this->authorizeUser();
         $this->docs = $this->getBaseInfo();
 
         foreach ($this->getAppRoutes() as $route) {
@@ -190,7 +194,11 @@ class Generator
             $class = (string) $parameter->getType();
 
             if (is_subclass_of($class, FormRequest::class)) {
-                return (new $class)->rules();
+                try {
+                    return (new $class)->rules();
+                } catch (\Exception $exception){
+                    return [];
+                }
             }
         }
     }
@@ -232,12 +240,15 @@ class Generator
 
     protected function getControllerName($controllerArray)
     {
-        $namespaceReplaced = str_replace($controllerArray['namespace']. '\\', '', $controllerArray['controller']);
-        $actionNameReplaced = substr($namespaceReplaced, 0, strpos($namespaceReplaced, '@'));
-        $controllerReplaced = str_replace('Controller', '', $actionNameReplaced);
-        $controllerNameArray = preg_split('/(?=[A-Z])/', $controllerReplaced);
-        $controllerName = trim(implode(' ', $controllerNameArray));
-
+        if(isset($controllerArray['controller'])) {
+            $namespaceReplaced = str_replace($controllerArray['namespace'] . '\\', '', $controllerArray['controller']);
+            $actionNameReplaced = substr($namespaceReplaced, 0, strpos($namespaceReplaced, '@'));
+            $controllerReplaced = str_replace('Controller', '', $actionNameReplaced);
+            $controllerNameArray = preg_split('/(?=[A-Z])/', $controllerReplaced);
+            $controllerName = trim(implode(' ', $controllerNameArray));
+        }else{
+            $controllerName = "Anonymous";
+        }
         return $controllerName;
     }
 
@@ -270,6 +281,14 @@ class Generator
                 return new Parameters\BodyParameterGenerator($rules);
             default:
                 return new Parameters\QueryParameterGenerator($rules);
+        }
+    }
+
+    protected function authorizeUser()
+    {
+        if($this->userId > 0){
+            $user = \App\User::find($this->userId);
+            auth()->login($user);
         }
     }
 }
