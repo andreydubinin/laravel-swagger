@@ -1,8 +1,8 @@
 <?php
 
-namespace Vigneshc91\LaravelSwagger\Tests;
+namespace Andreydubinin\LaravelSwagger\Tests;
 
-use Vigneshc91\LaravelSwagger\Generator;
+use Andreydubinin\LaravelSwagger\Generator;
 
 class GeneratorTest extends TestCase
 {

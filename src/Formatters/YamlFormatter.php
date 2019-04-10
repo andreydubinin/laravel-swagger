@@ -1,8 +1,8 @@
 <?php
 
-namespace Vigneshc91\LaravelSwagger\Formatters;
+namespace Andreydubinin\LaravelSwagger\Formatters;
 
-use Vigneshc91\LaravelSwagger\LaravelSwaggerException;
+use Andreydubinin\LaravelSwagger\LaravelSwaggerException;
 
 class YamlFormatter extends Formatter
 {

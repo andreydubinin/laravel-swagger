@@ -1,9 +1,9 @@
 <?php
 
-namespace Vigneshc91\LaravelSwagger\Tests\Parameters;
+namespace Andreydubinin\LaravelSwagger\Tests\Parameters;
 
-use Vigneshc91\LaravelSwagger\Tests\TestCase;
-use Vigneshc91\LaravelSwagger\Parameters\BodyParameterGenerator;
+use Andreydubinin\LaravelSwagger\Tests\TestCase;
+use Andreydubinin\LaravelSwagger\Parameters\BodyParameterGenerator;
 
 class BodyParameterGeneratorTest extends TestCase
 {
